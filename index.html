@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Kuesioner Keberadaan Dugong</title>
+
+    <!-- CSS Leaflet -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <style>
+        body {
+            font-family: Poppins, Semi Bold;
+            margin: 20px;
+        }
+        #map {
+            height: 400px;
+            margin-top: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-group" style="text-align:center;">
+  <img src="https://originaldiving.d3r.site/images/hero_xlarge/559030-istock-1409341603.jpg"
+       alt="Dugong"
+       style="max-width:500px; border-radius:8px;">
+</div>
+<hr>
+
+
+<h2>Kuesioner Keberadaan Dugong</h2>
+
+<form id="surveyForm">
+
+  <div class="form-group">
+  <label>Nama:</label><br>
+  <input type="text" name="nama" placeholder="Masukkan nama lengkap" required>
+</div>
+
+<div class="form-group">
+  <label>Jenis Kelamin:</label><br>
+  <input type="radio" name="jenis_kelamin" value="Laki-laki" required> Laki-laki<br>
+  <input type="radio" name="jenis_kelamin" value="Perempuan"> Perempuan
+</div>
+
+<div class="form-group">
+  <label>Usia:</label><br>
+  <select name="usia" required>
+    <option value="">-- Pilih rentang usia --</option>
+    <option value="Remaja (13–19)">Remaja (13–19 tahun)</option>
+    <option value="Dewasa (20–59)">Dewasa (20–59 tahun)</option>
+    <option value="Lansia (≥60)">Lansia / Lanjut Usia (60 tahun ke atas)</option>
+  </select>
+</div>
+
+<div class="form-group">
+<label for="tempat_lahir">Tempat Lahir</label><br>
+<input type="text"
+       id="tempat_lahir"
+       name="tempat_lahir"
+       placeholder="Contoh: Bintan, Kepulauan Riau"
+       required>
+</div>
+
+    <div class="form-group">
+        <label>Pekerjaan:</label><br>
+        <input type="text" name="pekerjaan" required>
+    </div>
+
+<div class="form-group">
+  <label>Pendidikan Terakhir:</label><br>
+  <select name="pendidikan_terakhir" required>
+    <option value="">-- Pilih pendidikan terakhir --</option>
+    <option value="Tidak sekolah">Tidak sekolah</option>
+    <option value="SD">SD</option>
+    <option value="SMP">SMP</option>
+    <option value="SMA">SMA</option>
+    <option value="Perguruan Tinggi">Perguruan Tinggi</option>
+  </select>
+</div>
+
+<div class="form-group">
+<label>Nomor Kontak Yang Dapat Dihubungi</label><br>
+<input type="text"
+       id="nomor_kontak_yang_dapat_dihubungi"
+       name="nomor_kontak_yang_dapat_dihubungi"
+       required>
+</div>
+
+<hr>
+
+<h3>A. Pengetahuan Dugong</h3>
+
+<div class="form-group">
+  <label>Apakah Anda mengenal dugong/ikan duyung?</label><br>
+  <input type="radio" name="kenal" value="Ya" required> Ya
+  <input type="radio" name="kenal" value="Tidak"> Tidak
+</div>
+
+<div class="form-group">
+  <label for="sumber_dugong">Dari mana Anda mengetahui dugong?</label><br>
+  <input type="text"
+         id="sumber_dugong"
+         name="sumber_dugong"
+         placeholder="Contoh: melihat langsung, cerita nelayan, media, dll"
+         required>
+</div>
+
+<div class="form-group">
+  <label>Seberapa sering menurut Anda dugong terlihat di perairan sekitar sini?</label><br>
+
+  <label><input type="radio" name="frekuensi_dugong" value="1" required> Tidak pernah</label><br>
+  <label><input type="radio" name="frekuensi_dugong" value="2"> Jarang (&lt;1x/tahun)</label><br>
+  <label><input type="radio" name="frekuensi_dugong" value="3"> Kadang (1–4x/tahun)</label><br>
+  <label><input type="radio" name="frekuensi_dugong" value="4"> Cukup sering (5–12x/tahun)</label><br>
+  <label><input type="radio" name="frekuensi_dugong" value="5"> Sering (&gt;12x/tahun)</label>
+</div>
+
+<hr>
+
+<h3>B. Jenis Kejadian</h3>
+
+<select id="jenisKejadian">
+  <option value="">-- Pilih Kejadian --</option>
+  <option value="sighting">Sighting (Penampakan)</option>
+  <option value="stranding">Stranding (Terdampar)</option>
+  <option value="bycatch">By Catch</option>
+</select>
+
+<!-- PERTANYAAN SIGHTING -->
+<div id="sighting" style="display:none; margin-top:20px;">
+  <h4>Pertanyaan Penampakan</h4>
+  <label><b>Pernah melihat duyung hidup secara langsung?</b></label><br>
+
+<label>
+  <input type="radio" name="melihat_duyung" value="sering">
+  1. Ya, sering (&gt;5x)
+</label><br>
+
+<label>
+  <input type="radio" name="melihat_duyung" value="beberapa_kali">
+  2. Ya, beberapa kali (2–5x)
+</label><br>
+
+<label>
+  <input type="radio" name="melihat_duyung" value="sekali">
+  3. Ya, sekali
+</label><br>
+
+<label>
+  <input type="radio" name="melihat_duyung" value="tidak_pernah">
+  4. Tidak pernah
+</label>
+
+<br><br>
+
+<!-- Pertanyaan: Jumlah individu -->
+<label><b>Jumlah individu yang dilihat</b></label><br>
+
+<label>
+   <input type="radio" name="jumlah_individu" value="sendirian">
+   Sendirian
+</label><br>
+
+<label>
+   <input type="radio" name="jumlah_individu" value="berpasangan">
+   Berpasangan
+</label><br>
+
+<label>
+   <input type="radio" name="jumlah_individu" value="kelompok_kecil">
+   Kelompok kecil
+</label><br>
+
+<label>
+   <input type="radio" name="jumlah_individu" value="kelompok_besar">
+   Kelompok besar
+</label>
+
+<br><br>
+
+<label><b>Kondisi Duyung saat dilihat</b></label><br>
+
+<label>
+  <input type="checkbox" name="kondisi_duyung[]" value="sehat_aktif">
+  Sehat / aktif
+</label><br>
+
+<label>
+  <input type="checkbox" name="kondisi_duyung[]" value="lemah">
+  Lemah
+</label><br>
+
+<label>
+  <input type="checkbox" name="kondisi_duyung[]" value="terluka">
+  Terluka
+</label><br>
+
+<label>
+  <input type="checkbox" name="kondisi_duyung[]" value="sedang_makan">
+  Sedang makan
+</label><br>
+
+<label>
+  <input type="checkbox" name="kondisi_duyung[]" value="sedang_berenang">
+  Sedang berenang
+</div>
+
+<div id="stranding" style="display:none; margin-top:20px;">
+  <h4>Pertanyaan Terdampar</h4>
+
+  <label><b>Pernah menemukan dugong terdampar (hidup/mati)?</b></label><br>
+
+  <label>
+    <input type="radio" name="status_stranding" value="hidup">
+    Ya, hidup
+  </label><br>
+
+  <label>
+    <input type="radio" name="status_stranding" value="mati">
+    Ya, mati
+  </label><br>
+
+  <label>
+    <input type="radio" name="status_stranding" value="tidak_pernah">
+    Tidak pernah
+  </label><br>
+
+  <label>
+    <input type="radio" name="status_stranding" value="hanya_mendengar">
+    Hanya mendengar
+  </label>
+
+<br><br>
+
+<label><b>Perkiraan panjang dan berat dugong (jika diukur)</b></label><br>
+
+<label>
+  Panjang (meter):
+  <input type="number" step="0.1" min="0" placeholder="contoh: 2.5">
+</label>
+<br><br>
+
+<label>
+  Berat (kg):
+  <input type="number" step="1" min="0" placeholder="contoh: 300">
+</div>
+
+
+<!-- PERTANYAAN BY CATCH -->
+<div id="bycatch" style="display:none; margin-top:20px;">
+<h4>Pertanyaan By Catch</h4>
+
+<label><b>Pernah menangkap Duyung tidak sengaja (by catch)?</b></label><br>
+
+<label>
+  <input type="radio" name="bycatch_status" value="ya_sendiri">
+  1. Ya, sendiri
+</label><br>
+
+<label>
+  <input type="radio" name="bycatch_status" value="ya_orang_lain">
+  2. Ya, orang lain
+</label><br>
+
+<label>
+  <input type="radio" name="bycatch_status" value="tidak">
+  3. Tidak
+</label><br>
+
+<label>
+  <input type="radio" name="bycatch_status" value="tidak_menjawab">
+  4. Tidak menjawab
+</label>
+
+<br><br>
+
+<label><b>Jika pernah, alat tangkap apa yang digunakan?</b></label><br>
+
+<label>
+  <input type="checkbox" name="alat_tangkap[]" value="jaring_insang">
+  Jaring insang
+</label><br>
+
+<label>
+  <input type="checkbox" name="alat_tangkap[]" value="pukat">
+  Pukat
+</label><br>
+
+<label>
+  <input type="checkbox" name="alat_tangkap[]" value="pancing">
+  Pancing
+</label><br>
+
+<label>
+  <input type="checkbox" name="alat_tangkap[]" value="bubu">
+  Bubu
+</label><br>
+
+<label>
+  <input type="checkbox" name="alat_tangkap[]" value="lainnya">
+  Lainnya:
+  <input type="text" placeholder="sebutkan alat tangkap">
+</label>
+
+<br><br>
+
+<label><b>Apa yang dilakukan saat menemukan / by catch?</b></label><br>
+
+<label>
+  <input type="checkbox" name="tindakan_bycatch[]" value="dilepaskan">
+  Dilepaskan
+</label><br>
+
+<label>
+  <input type="checkbox" name="tindakan_bycatch[]" value="dibawa_pulang">
+  Dibawa pulang
+</label><br>
+
+<label>
+  <input type="checkbox" name="tindakan_bycatch[]" value="dilaporkan">
+  Dilaporkan
+</label><br>
+
+<label>
+  <input type="checkbox" name="tindakan_bycatch[]" value="dibiarkan">
+  Dibiarkan
+</label><br>
+
+<label>
+  <input type="checkbox" name="tindakan_bycatch[]" value="lainnya">
+  Lainnya:
+  <input type="text" placeholder="jelaskan">
+</div>
+
+<script>
+document.getElementById("jenisKejadian").addEventListener("change", function () {
+
+  document.getElementById("sighting").style.display = "none";
+  document.getElementById("stranding").style.display = "none";
+  document.getElementById("bycatch").style.display = "none";
+
+  if (this.value !== "") {
+    document.getElementById(this.value).style.display = "block";
+  }
+});
+</script>
+
+<hr>
+
+    <div class="form-group">
+        <label>Tentukan lokasi pada peta:</label>
+        <div id="map"></div>
+    </div>
+
+    <!-- Koordinat tersembunyi -->
+    <input type="hidden" id="lat" name="lat">
+    <input type="hidden" id="lng" name="lng">
+
+    <button type="submit">Kirim Kuesioner</button>
+
+</form>
+
+<!-- JS Leaflet -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    // Inisialisasi peta
+    var map = L.map('map').setView([1.05, 104.03], 10); // contoh: Bintan
+
+    // Basemap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    var marker;
+
+    // Event klik peta
+    map.on('click', function(e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+
+        // Hapus marker lama
+        if (marker) {
+            map.removeLayer(marker);
+        }
+
+        // Tambah marker baru
+        marker = L.marker([lat, lng]).addTo(map);
+
+        // Simpan koordinat
+        document.getElementById('lat').value = lat;
+        document.getElementById('lng').value = lng;
+    });
+
+    // Submit form
+    document.getElementById('surveyForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    if (!document.getElementById('lat').value) {
+        alert("Silakan pilih lokasi di peta terlebih dahulu!");
+        return;
+    }
+
+    const formData = new FormData(this);
+    const data = {};
+
+    formData.forEach((value, key) => {
+    if (data[key]) {
+        data[key] += ", " + value;
+    } else {
+        data[key] = value;
+    }
+});
+
+    fetch("https://script.google.com/macros/s/AKfycbxhHLlg3UZ2ckqCc5DhrN6jkMXl2nQo-_ZPrjGapxJgYYZ2K0BCC_gIaRnFPsOJXpwT/exec", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+})
+    .then(response => response.text())
+    .then(result => {
+        alert("Data berhasil dikirim ke Google Sheets!");
+        document.getElementById("surveyForm").reset();
+    })
+    .catch(error => {
+        alert("Terjadi kesalahan!");
+        console.error(error);
+    });
+});
+</script>
+
+<br><br>
+<hr>
+
+<h4>Informasi Kontak</h4>
+
+<p>
+  <b>Nama:</b> Joshua Tampubolon<br>
+  <b>Nomor Kontak:</b>
+  <a href="tel:+6281368683007">+62 813-6868-3007</a><br>
+  <b>Email:</b>
+  <a href="mailto:tampubolonjoshua09@gmail.com">
+    tampubolonjoshua09@gmail.com
+  </a>
+</p>
+</body>
+</html>
