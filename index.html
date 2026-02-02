@@ -382,18 +382,18 @@
 document.getElementById("surveyForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
- const formData = new FormData(this);
+  const formData = new FormData(this);
 
-fetch("https://script.google.com/macros/s/AKfycbzwkkJSHZchXG24oDzqFlBB7Njpm_5KsdNoVMjsAZm8GvQJ4BM1pLLyY48nOErDnHpg/exec", {
-  method: "POST",
-  body: formData
-})
-  .then(res => res.json())
-  .then(response => {
+  fetch("https://script.google.com/macros/s/AKfycby7CzRGeV_GaPdVOa3Ni9R71FOqKQDVv70myxBiqYircCVWUakyaLcHYXsBugAsbMHH/exec", {
+    method: "POST",
+    body: formData,
+    mode: "no-cors"
+  })
+  .then(() => {
     alert("Data berhasil dikirim!");
     document.getElementById("surveyForm").reset();
   })
-  .catch(error => {
+  .catch(() => {
     alert("Terjadi kesalahan!");
   });
 });
